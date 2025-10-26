@@ -49,11 +49,20 @@ function renderEmojis(images) {
     copyBtn.className = 'copy-btn';
 
     copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(base64).then(() => {
+  fetch(base64)
+    .then(res => res.blob())
+    .then(blob => {
+      const item = new ClipboardItem({ [blob.type]: blob });
+      navigator.clipboard.write([item]).then(() => {
         copyBtn.textContent = '✅';
         setTimeout(() => copyBtn.textContent = '📋', 1000);
+      }).catch(err => {
+        console.error('Clipboard write failed:', err);
+        alert("Clipboard access failed. Make sure you're using Chrome and have permissions.");
       });
     });
+});
+
 
     wrapper.appendChild(img);
     wrapper.appendChild(copyBtn);
