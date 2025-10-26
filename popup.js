@@ -1,72 +1,25 @@
-const uploadInput = document.getElementById('upload');
-const grid = document.getElementById('emoji-grid');
+const emojiGrid = document.getElementById('emoji-grid');
 
-// Load existing emojis
-chrome.storage.local.get('emojis', (data) => {
-  if (data.emojis) renderEmojis(data.emojis);
-});
+// List of Unicode emojis (you can expand this!)
+const emojis = [
+  "😊", "😎", "🥲", "🐸", "🐶", "🌈", "🔥", "❤️", "🎉", "💀",
+  "🤖", "🧠", "🍕", "☕", "🎮", "📚", "🌟", "💡", "📝", "🚀"
+];
 
-// Handle new uploads
-uploadInput.addEventListener('change', (event) => {
-  const files = Array.from(event.target.files);
+// Render emojis
+emojis.forEach(emoji => {
+  const span = document.createElement('span');
+  span.className = 'emoji';
+  span.textContent = emoji;
 
-  const readers = files.map(file => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result); // Base64
-      reader.readAsDataURL(file);
+  span.addEventListener('click', () => {
+    navigator.clipboard.writeText(emoji).then(() => {
+      span.textContent = '✅';
+      setTimeout(() => span.textContent = emoji, 800);
+    }).catch(err => {
+      console.error('Clipboard write failed:', err);
     });
   });
 
-  Promise.all(readers).then(images => {
-    chrome.storage.local.get('emojis', (data) => {
-      const updated = (data.emojis || []).concat(images);
-      chrome.storage.local.set({ emojis: updated }, () => {
-        renderEmojis(updated);
-      });
-    });
-  });
+  emojiGrid.appendChild(span);
 });
-
-function renderEmojis(images) {
-  grid.innerHTML = '';  // Clear the current grid
-
-  if (images.length === 0) {
-    grid.innerHTML = "<p>No emojis yet! Upload one 👇</p>";
-    return;  // Don't try to render emojis if there are none
-  }
-
-  images.forEach(base64 => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'emoji-wrapper';
-
-    const img = document.createElement('img');
-    img.src = base64;
-    img.className = 'emoji-img';
-
-    const copyBtn = document.createElement('button');
-    copyBtn.textContent = '📋';
-    copyBtn.className = 'copy-btn';
-
-    copyBtn.addEventListener('click', () => {
-  fetch(base64)
-    .then(res => res.blob())
-    .then(blob => {
-      const item = new ClipboardItem({ [blob.type]: blob });
-      navigator.clipboard.write([item]).then(() => {
-        copyBtn.textContent = '✅';
-        setTimeout(() => copyBtn.textContent = '📋', 1000);
-      }).catch(err => {
-        console.error('Clipboard write failed:', err);
-        alert("Clipboard access failed. Make sure you're using Chrome and have permissions.");
-      });
-    });
-});
-
-
-    wrapper.appendChild(img);
-    wrapper.appendChild(copyBtn);
-    grid.appendChild(wrapper);
-  });
-}
-

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Emoji Copy Shortcut",
   "version": "1.0",
-  "description": "Upload your own emojis and copy them to your clipboard with a click.",
+  "description": "Click to copy emojis to your clipboard instantly.",
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -14,9 +14,5 @@
     "32": "icons/Proud-TikTok-Emoji.png",
     "48": "icons/Excited-TikTok-Emoji.png",
     "128": "icons/Excited-TikTok-Emoji.png"
-  },
-  "permissions": [
-    "storage",
-    "clipboardWrite"
-  ]
+  }
 }
