@@ -40,8 +40,8 @@ This project combines creativity with technical utility. As someone interested i
 ---
 
 ## Installation
-
-
+1. Go to Chrome Web Store
+2. Search for: Emoji Copy Shortcut
 
 ---
 
